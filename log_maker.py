@@ -1,12 +1,12 @@
 import pyscreenshot as ImageGrab
-import mouse
+import mouse 
 import time
 import math
 import logging
 i = 0
-diag = 30
-logging.basicConfig(filename='C:/Users/kir/Desktop/actions/log.txt',level=logging.INFO)
-path_to_folder = 'C:/Users/kir/Desktop/actions/'
+diag = 30 #Размер диагонали квардрата прокликанной иконки в пикселях
+logging.basicConfig(filename='C:/Users/kir/Desktop/actions/log.txt',level=logging.INFO) #Пусть к файлу логгирования
+path_to_folder = 'C:/Users/kir/Desktop/actions/' #Пусть к папке с изображениями
 while True:
     x, y = mouse.get_position()
     if mouse.is_pressed(button='left'):
