@@ -1,10 +1,9 @@
 import os
 import time
-log_path = 'C:/Users/kir/Desktop/actions/log.txt'
+log_path = 'C:/Users/kir/Desktop/actions/log.txt' # Путь к файлу логов
 dg = open(log_path,'r')
 lines = dg.read().splitlines()
-acts = {'Click' : click, 'DoubleClick' : doubleClick}
-print(lines[0].split('|'))
+acts = {'Click' : click, 'DoubleClick' : doubleClick}  # Список функций и подходящих под них функций
 for i in lines:
     lst = i.split('|')
     coords_lst = lst[1].split(',')
@@ -15,8 +14,8 @@ for i in lines:
     try:
         time.sleep(1)
         coords = find(path).getTarget()
-        print('found icon')
+        print('found icon') # Если координаты иконки найдены 
     except:
         coords = Location(x_coord,y_coord)
-        print('not found icon :(')
+        print('not found icon :(') # Если координаты иконки не найдены (тогда ориентируется по коориднатам из лог файла)
     acts[action](coords)
