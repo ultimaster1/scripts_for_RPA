@@ -34,24 +34,16 @@ class Action_Logger():
         self.state_left = win32api.GetKeyState(0x01)
 
 
-    def log_on(self, number_of_clicks,number_of_image):
+    def log_on(self, number_of_clicks,number_of_image,im = 0,x= 0,y= 0):
         if number_of_clicks == 1:
             clicktype = 'Click'
         else:
             clicktype = 'DoubleClick'
-
-        x, y = mouse.get_position()
-        number_of_image += 1
-        x1 = int(round(x - math.sqrt((self.diag * self.diag) / 2), 0))
-        x2 = int(round(x + math.sqrt((self.diag * self.diag) / 2), 0))
-        y1 = int(round(y + math.sqrt((self.diag * self.diag) / 2), 0))
-        y2 = int(round(y - math.sqrt((self.diag * self.diag) / 2), 0))
-        im = ImageGrab.grab(bbox=(x1, y2, x2, y1))
         img_path = self.path + str(number_of_image) + 'im.jpeg'
         im.save(img_path, quality=230)
         logging.info('|' + str(x) + ',' + str(y) + '|' + clicktype + '|' + img_path)
-        time.sleep(0.25)
-
+        print(clicktype)
+        print(number_of_image)
 
     def image_bbox(self):
         x, y = mouse.get_position()
@@ -60,34 +52,28 @@ class Action_Logger():
         y1 = int(round(y + math.sqrt((self.diag * self.diag) / 2), 0))
         y2 = int(round(y - math.sqrt((self.diag * self.diag) / 2), 0))
         im = ImageGrab.grab(bbox=(x1, y2, x2, y1))
-        return im
+        return [im,x,y]
 
     def mouse_click(self):
         a = win32api.GetKeyState(0x01)
         cnt = 0
         if a != self.state_left:  # Button state changed
-            self.num += 1
-            if a < 0:
-                # self.image_bbox()
-                print('botton pressed')
             if a >= 0:
+                img = self.image_bbox()
+                self.state_left = a
                 cnt += 1
-                print('botton unpressed')
-                self.state_left = win32api.GetKeyState(0x01)
                 x = time.time()
                 while (time.time() - x) < 0.15:
-                    a = win32api.GetKeyState(0x01)
-                    if a != self.state_left:  # Button state changed
-                        self.state_left = a
-                        if a < 0:
-                            print('botton preesed again')
-                        if a >= 0:
-                            print('botton unpreesed again')
+                    b = win32api.GetKeyState(0x01)
+                    if b != self.state_left:  # Button state changed
+                        if b >= 0:
+                            self.state_left = abs(a - 1)
                             cnt += 1
-                            return self.log_on(cnt, self.num)
-                return self.log_on(cnt, self.num)
-
-
+                            self.num += 1
+                            # print(img)
+                            return self.log_on(cnt, self.num,img[0],img[1],img[2])
+                self.num += 1
+                return self.log_on(cnt, self.num,img[0],img[1],img[2])
 
 
 
@@ -109,4 +95,3 @@ if __name__ == "__main__":
                         up = k.split('+')[1].upper()
                         logging.info('|' + up + '|' + 'KeyPress')
 
-        time.sleep(0.001)
