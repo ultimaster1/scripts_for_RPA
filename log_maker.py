@@ -3,25 +3,9 @@ import pyscreenshot as ImageGrab
 import mouse
 import math
 import logging
-import keyboard
-import string
 import time
-
-
-# num = 0
-# diag = 30
-# path_to_folder = 'C:/Users/kir/Desktop/actions/'
-# alphabet_string = string.ascii_lowercase
-# alphabet = list(alphabet_string)
-# special_combinations = ['space','ctrl+shift','capslock','alt+shift','backspace','enter']
-# alphabet_shift = list(map(shif_plus,alphabet))
-# all_keys = alphabet + special_combinations
-# all_keys_shif = alphabet_shift + special_combinations
-# state_left = win32api.GetKeyState(0x01)  # Left button down = 0 or 1. Button up = -127 or -128
-
-
-def shif_plus(x):
-    return 'shift+' + x
+from threading import Thread
+from pynput.keyboard import Listener
 
 logging.basicConfig(filename='C:/Users/kir/Desktop/actions/log.txt',level=logging.INFO)
 
@@ -76,22 +60,23 @@ class Action_Logger():
                 return self.log_on(cnt, self.num,img[0],img[1],img[2])
 
 
+def on_press(key):  # The function that's called when a key is pressed
+    logging.info("{0}|Key_pressed".format(key))
+
+
+def key_loop():
+    with Listener(on_press=on_press) as listener:  # Create an instance of Listener
+        listener.join()  # Join the listener thread to the main thread to keep waiting for keys
+
+
+def mouse_loop(obj):
+    while True:
+        obj.mouse_click()
+
 
 if __name__ == "__main__":
-    alphabet = list(string.ascii_lowercase) + ['space', 'ctrl+shift', 'capslock', 'alt+shift', 'backspace', 'enter',
-                                               'esc']
-    alphabet_shift = list(map(shif_plus, alphabet)) + ['space', 'ctrl+shift', 'capslock', 'alt+shift', 'backspace',
-                                                       'enter','esc']
     A_L = Action_Logger()
-    while True:
-        A_L.mouse_click()
-        for i in alphabet:
-            if keyboard.is_pressed(i):
-                logging.info('|' + i + '|' + 'KeyPress')
-                time.sleep(0.25)
-            elif keyboard.is_pressed('shift'):
-                for k in alphabet_shift:
-                    if keyboard.is_pressed(k):
-                        up = k.split('+')[1].upper()
-                        logging.info('|' + up + '|' + 'KeyPress')
-
+    keyboard_th = Thread(target=key_loop)
+    mouse_th = Thread(target=mouse_loop,args=(A_L,))
+    keyboard_th.start()
+    mouse_th.start()
