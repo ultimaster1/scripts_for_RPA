@@ -1,21 +1,38 @@
 import os
 import time
-log_path = 'C:/Users/kir/Desktop/actions/log.txt' # Путь к файлу логов
+def check_if_key_in_constants(key):
+    sp_keys = {'space': Key.SPACE, 
+     'backspace':Key.BACKSPACE,
+     'enter' : Key.ENTER}
+    if key in sp_keys.keys():
+        return sp_keys.keys[key]
+    else:
+        return key
+
+
+log_path = 'C:/Users/kir/Desktop/actions/log.txt'
 dg = open(log_path,'r')
 lines = dg.read().splitlines()
-acts = {'Click' : click, 'DoubleClick' : doubleClick}  # Список функций и подходящих под них функций
+acts = {'Click' : click, 'DoubleClick' : doubleClick}
+print(lines[0].split('|'))
 for i in lines:
     lst = i.split('|')
-    coords_lst = lst[1].split(',')
-    x_coord = int(coords_lst[0])
-    y_coord = int(coords_lst[1])
-    action = lst[2]
-    path = makePath(lst[3])
-    try:
-        time.sleep(1)
-        coords = find(path).getTarget()
-        print('found icon') # Если координаты иконки найдены 
-    except:
-        coords = Location(x_coord,y_coord)
-        print('not found icon :(') # Если координаты иконки не найдены (тогда ориентируется по коориднатам из лог файла)
-    acts[action](coords)
+    if lst[2] == 'KeyPress':
+        letter = check_if_key_in_constants(lst[1])
+        type(letter)
+    else:
+        coords_lst = lst[1].split(',')
+        x_coord = int(coords_lst[0])
+        y_coord = int(coords_lst[1])
+        action = lst[2]
+        path = makePath(lst[3])
+        try:
+            time.sleep(1)
+            coords = find(path).getTarget()
+            print('found icon')
+        except:
+            coords = Location(x_coord,y_coord)
+            print('not found icon :(')
+        acts[action](coords)
+
+
