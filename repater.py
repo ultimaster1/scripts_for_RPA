@@ -1,11 +1,22 @@
 import os
 import time
 def check_if_key_in_constants(key):
-    sp_keys = {'space': Key.SPACE, 
-     'backspace':Key.BACKSPACE,
-     'enter' : Key.ENTER}
-    if key in sp_keys.keys():
-        return sp_keys.keys[key]
+    special_keys = {'tab': Key.TAB, 
+         'backspace' : Key.BACKSPACE,
+         'enter' : Key.ENTER,
+         'esc' : Key.ESC,
+         'delete' : Key.DELETE,
+         'insert' : Key.INSERT,
+         'space' : Key.SPACE
+           }  
+    try:
+        special_key_arr = key.split('.')  
+        key = special_key_arr[1]
+    except:         
+        pass
+    key = key.replace("'","")
+    if key in list(special_keys.keys()):
+        return special_keys[key]
     else:
         return key
 
@@ -13,12 +24,13 @@ def check_if_key_in_constants(key):
 log_path = 'C:/Users/kir/Desktop/actions/log.txt'
 dg = open(log_path,'r')
 lines = dg.read().splitlines()
+print(lines)
 acts = {'Click' : click, 'DoubleClick' : doubleClick}
 print(lines[0].split('|'))
 for i in lines:
     lst = i.split('|')
-    if lst[2] == 'KeyPress':
-        letter = check_if_key_in_constants(lst[1])
+    if lst[1] == 'KeyPress':
+        letter = check_if_key_in_constants(lst[2])
         type(letter)
     else:
         coords_lst = lst[1].split(',')
@@ -34,5 +46,3 @@ for i in lines:
             coords = Location(x_coord,y_coord)
             print('not found icon :(')
         acts[action](coords)
-
-
