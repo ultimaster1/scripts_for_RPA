@@ -1,11 +1,12 @@
 import win32api
-import pyscreenshot as ImageGrab
+import keyboard
 import mouse
 import math
 import logging
 import time
 from threading import Thread
 from pynput.keyboard import Listener
+import os
 from mss import mss
 from PIL import Image
 
@@ -84,13 +85,15 @@ class Action_Logger():
     def mouse_click(self):
         a = win32api.GetKeyState(0x01)
         cnt = 0
+        if keyboard.is_pressed('esc'):
+            os._exit(0)
         if a != self.state_left:  # Button state changed
             if a >= 0:
                 img = self.image_bbox()
                 self.state_left = a
                 cnt += 1
                 x = time.time()
-                while (time.time() - x) < 0.25:
+                while (time.time() - x) < 0.5:
                     b = win32api.GetKeyState(0x01)
                     if b != self.state_left:  # Button state changed
                         if b >= 0:
